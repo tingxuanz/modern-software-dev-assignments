@@ -37,7 +37,9 @@ QUESTION = (
 
 
 # TODO: Fill this in!
-YOUR_SYSTEM_PROMPT = ""
+YOUR_SYSTEM_PROMPT = """
+Write the function as specified, using only the provided context. If the context is missing information, do your best to write a correct function that would work if the context were complete. Do not make up details that are not in the context, but you can use common knowledge and reasonable assumptions. Focus on including the required snippets in your implementation.
+"""
 
 
 # For this simple example
@@ -56,7 +58,14 @@ def YOUR_CONTEXT_PROVIDER(corpus: List[str]) -> List[str]:
 
     For example, return [] to simulate missing context, or [corpus[0]] to include the API docs.
     """
-    return []
+    if not corpus:
+        return []
+    result = []
+    for doc in corpus:
+        if doc.startswith("[load_error]") or doc.startswith("[missing_file]"):
+            continue
+        result.append(doc)
+    return result
 
 
 def make_user_prompt(question: str, context_docs: List[str]) -> str:
